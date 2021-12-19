@@ -56,7 +56,7 @@ class LoginFormAuthenticator extends AbstractAuthenticator
                     'authenticate',
                     $request->request->get('_csrf_token')
                 ),
-                new RememberMeBadge() //_remember_me field is checked under the hood
+                (new RememberMeBadge())->enable() //_remember_me field is checked under the hood'; enable remember me without security.yaml
             ]
         );
     }
