@@ -18,7 +18,10 @@ security:
         main:
             lazy: true #do not authenticate user until it's needed
             provider: app_user_provider
-            custom_authenticator: App\Security\LoginFormAuthenticator
+            entry_point: App\Security\DummyAuthenticator
+            custom_authenticator:
+                - App\Security\LoginFormAuthenticator
+                - App\Security\DummyAuthenticator
             logout: true
             remember_me:
                 secret: '%kernel.secret%'
