@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 
@@ -35,22 +36,19 @@ class LoginFormAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): PassportInterface
     {
-        $email = $request->request->get('email', function($userIdentifier) {
-            $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
-
-            if (!$user) {
-                throw new UserNotFoundException();
-            }
-
-            return $user;
-        });
-
+        $email = $request->request->get('email');
         $password = $request->request->get('password');
         return new Passport(
-            new UserBadge($email),
-            new CustomCredentials(function($credentials, User $user) {
-                return $credentials === 'tada';
-            }, $password)
+            new UserBadge($email, function($userIdentifier) {
+                // optionally pass a callback to load the User manually
+                $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
+
+                if (!$user) {
+                    throw new UserNotFoundException();
+                }
+                return $user;
+            }),
+            new PasswordCredentials($password)
         );
     }
 
