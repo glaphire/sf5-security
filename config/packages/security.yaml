@@ -18,16 +18,20 @@ security:
         main:
             lazy: true #do not authenticate user until it's needed
             provider: app_user_provider
-            entry_point: App\Security\LoginFormAuthenticator
+            entry_point: form_login
             custom_authenticator:
-                - App\Security\LoginFormAuthenticator
+            #   - App\Security\LoginFormAuthenticator
                 - App\Security\DummyAuthenticator
             logout: true
             remember_me:
                 secret: '%kernel.secret%'
                 #always_remember_me: true
                 signature_properties: ['password']
-
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: email
+                password_parameter: password
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
