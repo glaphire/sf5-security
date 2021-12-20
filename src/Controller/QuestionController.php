@@ -46,15 +46,10 @@ class QuestionController extends AbstractController
 
     /**
      * @Route("/questions/new")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("ROLE_ADMIN")
      */
     public function new()
     {
-        //$this->denyAccessUnlessGranted('ROLE_USER');
-//        if (!$this->isGranted('ROLE_USER')) {
-//            throw $this->createAccessDeniedException('No access!');
-//        }
-
         return new Response('Sounds like a GREAT feature for V2!');
     }
 
