@@ -1,0 +1,350 @@
+# Default configuration for extension with alias: "security"
+security:
+    access_denied_url:    null # Example: /foo/error403
+    session_fixation_strategy: migrate # One of "none"; "migrate"; "invalidate"
+    hide_user_not_found:  true
+    always_authenticate_before_granting: false
+    erase_credentials:    true
+
+    # Enables the new Symfony Security system based on Authenticators, all used authenticators must support this before enabling this.
+    enable_authenticator_manager: false
+    access_decision_manager:
+        strategy:             ~ # One of "affirmative"; "consensus"; "unanimous"; "priority"
+        service:              ~
+        allow_if_all_abstain: false
+        allow_if_equal_granted_denied: true
+    encoders:
+
+        # Examples:
+        App\Entity\User1:    auto
+        App\Entity\User2:    { algorithm: auto, time_cost: 8, cost: 13 }
+
+        # Prototype
+        class:
+            algorithm:            ~
+            migrate_from:         []
+
+            # Name of hashing algorithm for PBKDF2 (i.e. sha256, sha512, etc..) See hash_algos() for a list of supported algorithms.
+            hash_algorithm:       sha512
+            key_length:           40
+            ignore_case:          false
+            encode_as_base64:     true
+            iterations:           5000
+            cost:                 null
+            memory_cost:          null
+            time_cost:            null
+            id:                   ~
+    password_hashers:
+
+        # Examples:
+        App\Entity\User1:    auto
+        App\Entity\User2:    { algorithm: auto, time_cost: 8, cost: 13 }
+
+        # Prototype
+        class:
+            algorithm:            ~
+            migrate_from:         []
+
+            # Name of hashing algorithm for PBKDF2 (i.e. sha256, sha512, etc..) See hash_algos() for a list of supported algorithms.
+            hash_algorithm:       sha512
+            key_length:           40
+            ignore_case:          false
+            encode_as_base64:     true
+            iterations:           5000
+            cost:                 null
+            memory_cost:          null
+            time_cost:            null
+            id:                   ~
+    providers:
+
+        # Examples:
+        my_memory_provider:  { memory: { users: { foo: { password: foo, roles: ROLE_USER }, bar: { password: bar, roles: '[ROLE_USER, ROLE_ADMIN]' } } } }
+        my_entity_provider:  { entity: { class: 'SecurityBundle:User', property: username } }
+
+        # Prototype
+        name:
+            id:                   ~
+            chain:
+                providers:            []
+            entity:
+
+                # The full entity class name of your user class.
+                class:                ~ # Required
+                property:             null
+                manager_name:         null
+            memory:
+                users:
+
+                    # Prototype
+                    identifier:
+                        password:             null
+                        roles:                []
+            ldap:
+                service:              ldap # Required
+                base_dn:              ~ # Required
+                search_dn:            null
+                search_password:      null
+                extra_fields:         []
+                default_roles:        []
+                uid_key:              sAMAccountName
+                filter:               '({uid_key}={username})'
+                password_attribute:   null
+    firewalls:            # Required
+
+        # Prototype
+        name:
+            pattern:              ~
+            host:                 ~
+            methods:              []
+            security:             true
+
+            # The UserChecker to use when authenticating users in this firewall.
+            user_checker:         security.user_checker
+            request_matcher:      ~
+            access_denied_url:    ~
+            access_denied_handler: ~
+
+            # An enabled authenticator name or a service id that implements "Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface"
+            entry_point:          ~
+            provider:             ~
+            stateless:            false
+            lazy:                 false
+            context:              ~
+            logout:
+                csrf_parameter:       _csrf_token
+                csrf_token_generator: ~
+                csrf_token_id:        logout
+                path:                 /logout
+                target:               /
+                success_handler:      ~ # Deprecated (Since symfony/security-bundle 5.1: The "success_handler" at path "security.firewalls..logout" is deprecated, register a listener on the "Symfony\Component\Security\Http\Event\LogoutEvent" event instead.)
+                invalidate_session:   true
+                delete_cookies:
+
+                    # Prototype
+                    name:
+                        path:                 null
+                        domain:               null
+                        secure:               false
+                        samesite:             null
+                handlers:             []
+            switch_user:
+                provider:             ~
+                parameter:            _switch_user
+                role:                 ROLE_ALLOWED_TO_SWITCH
+
+            # A list of badges that must be present on the authenticated passport.
+            required_badges:      []
+            x509:
+                provider:             ~
+                user:                 SSL_CLIENT_S_DN_Email
+                credentials:          SSL_CLIENT_S_DN
+            remote_user:
+                provider:             ~
+                user:                 REMOTE_USER
+            guard:
+
+                # A key from the "providers" section of your security config, in case your user provider is different than the firewall
+                provider:             ~
+
+                # A service id (of one of your authenticators) whose start() method should be called when an anonymous user hits a page that requires authentication
+                entry_point:          null
+
+                # An array of service ids for all of your "authenticators"
+                authenticators:       []
+
+            # An array of service ids for all of your "authenticators"
+            custom_authenticators: []
+            login_throttling:
+
+                # A service id implementing "Symfony\Component\HttpFoundation\RateLimiter\RequestRateLimiterInterface".
+                limiter:              ~
+                max_attempts:         5
+                interval:             '1 minute'
+
+                # The service ID of the lock factory used by the login rate limiter (or null to disable locking)
+                lock_factory:         null
+            form_login:
+                provider:             ~
+                remember_me:          true
+                success_handler:      ~
+                failure_handler:      ~
+                check_path:           /login_check
+                use_forward:          false
+                require_previous_session: false
+                login_path:           /login
+                username_parameter:   _username
+                password_parameter:   _password
+                csrf_parameter:       _csrf_token
+                csrf_token_id:        authenticate
+                enable_csrf:          false
+                post_only:            true
+                always_use_default_target_path: false
+                default_target_path:  /
+                target_path_parameter: _target_path
+                use_referer:          false
+                failure_path:         null
+                failure_forward:      false
+                failure_path_parameter: _failure_path
+                csrf_token_generator: ~
+            form_login_ldap:
+                provider:             ~
+                remember_me:          true
+                success_handler:      ~
+                failure_handler:      ~
+                check_path:           /login_check
+                use_forward:          false
+                require_previous_session: false
+                login_path:           /login
+                username_parameter:   _username
+                password_parameter:   _password
+                csrf_parameter:       _csrf_token
+                csrf_token_id:        authenticate
+                enable_csrf:          false
+                post_only:            true
+                always_use_default_target_path: false
+                default_target_path:  /
+                target_path_parameter: _target_path
+                use_referer:          false
+                failure_path:         null
+                failure_forward:      false
+                failure_path_parameter: _failure_path
+                csrf_token_generator: ~
+                service:              ldap
+                dn_string:            '{username}'
+                query_string:         ~
+                search_dn:            ''
+                search_password:      ''
+            json_login:
+                provider:             ~
+                remember_me:          true
+                success_handler:      ~
+                failure_handler:      ~
+                check_path:           /login_check
+                use_forward:          false
+                require_previous_session: false
+                login_path:           /login
+                username_path:        username
+                password_path:        password
+            json_login_ldap:
+                provider:             ~
+                remember_me:          true
+                success_handler:      ~
+                failure_handler:      ~
+                check_path:           /login_check
+                use_forward:          false
+                require_previous_session: false
+                login_path:           /login
+                username_path:        username
+                password_path:        password
+                service:              ldap
+                dn_string:            '{username}'
+                query_string:         ~
+                search_dn:            ''
+                search_password:      ''
+            login_link:
+
+                # Route that will validate the login link - e.g. "app_login_link_verify".
+                check_route:          ~ # Required
+
+                # If true, only HTTP POST requests to "check_route" will be handled by the authenticator.
+                check_post_only:      false
+
+                # An array of properties on your User that are used to sign the link. If any of these change, all existing links will become invalid.
+                signature_properties: # Required
+
+                    # Examples:
+                    - email
+                    - password
+
+                # The lifetime of the login link in seconds.
+                lifetime:             600
+
+                # Max number of times a login link can be used - null means unlimited within lifetime.
+                max_uses:             null
+
+                # Cache service id used to expired links of max_uses is set.
+                used_link_cache:      ~
+
+                # A service id that implements Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface.
+                success_handler:      ~
+
+                # A service id that implements Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface.
+                failure_handler:      ~
+
+                # The user provider to load users from.
+                provider:             ~
+                always_use_default_target_path: false
+                default_target_path:  /
+                login_path:           /login
+                target_path_parameter: _target_path
+                use_referer:          false
+                failure_path:         null
+                failure_forward:      false
+                failure_path_parameter: _failure_path
+            http_basic:
+                provider:             ~
+                realm:                'Secured Area'
+            http_basic_ldap:
+                provider:             ~
+                realm:                'Secured Area'
+                service:              ldap
+                dn_string:            '{username}'
+                query_string:         ~
+                search_dn:            ''
+                search_password:      ''
+            remember_me:
+                secret:               ~ # Required
+                service:              ~
+                user_providers:       []
+                catch_exceptions:     true
+
+                # An array of properties on your User that are used to sign the remember-me cookie. If any of these change, all existing cookies will become invalid.
+                signature_properties:
+
+                    # Default:
+                    - password
+
+                    # Examples:
+                    - email
+                    - password
+                token_provider:
+
+                    # The service ID of a custom rememberme token provider.
+                    service:              ~
+                    doctrine:
+                        enabled:              false
+                        connection:           null
+
+                # The service ID of a custom rememberme token verifier.
+                token_verifier:       ~
+                name:                 REMEMBERME
+                lifetime:             31536000
+                path:                 /
+                domain:               null
+                secure:               false # One of true; false; "auto"
+                httponly:             true
+                samesite:             null # One of null; "lax"; "strict"; "none"
+                always_remember_me:   false
+                remember_me_parameter: _remember_me
+            anonymous:
+                lazy:                 false # Deprecated (Since symfony/security-bundle 5.1: Using "anonymous: lazy" to make the firewall lazy is deprecated, use "anonymous: true" and "lazy: true" instead.)
+                secret:               null
+    access_control:
+
+        # Prototype
+        -
+            requires_channel:     null
+
+            # use the urldecoded format
+            path:                 null # Example: '^/path to resource/'
+            host:                 null
+            port:                 null
+            ips:                  []
+            methods:              []
+            allow_if:             null
+            roles:                []
+    role_hierarchy:
+
+        # Prototype
+        id:                   []
+
