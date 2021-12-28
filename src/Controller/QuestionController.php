@@ -68,6 +68,22 @@ class QuestionController extends AbstractController
     }
 
     /**
+     * @Route("/questions/edit/{slug}", name="app_question_edit")
+     */
+    public function edit(Question $question)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+
+        if ($question->getOwner() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('You are not the owner!');
+        }
+
+        return $this->render('question/edit.html.twig', [
+            'question' => $question,
+        ]);
+    }
+
+    /**
      * @Route("/questions/{slug}/vote", name="app_question_vote", methods="POST")
      */
     public function questionVote(Question $question, Request $request, EntityManagerInterface $entityManager)
