@@ -9,8 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Component\Security\Http\Authenticator\FormLoginAuthenticator;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -18,8 +17,7 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasherInterface,
-        UserAuthenticatorInterface $userAuthenticator,
-        FormLoginAuthenticator $loginAuthenticator
+        VerifyEmailHelperInterface $verifyEmailHelper
     ): Response
     {
         $user = new User();
@@ -38,16 +36,28 @@ class RegistrationController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
-            // do anything else you need here, like send an email
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $loginAuthenticator,
-                $request
+
+            $signatureComponents = $verifyEmailHelper->generateSignature(
+                'app_verify_email',
+                $user->getId(),
+                $user->getEmail(),
+                ['id' => $user->getId()]
             );
+
+            // TODO: in a real app, send this as an email!
+            $this->addFlash('success', 'Confirm your email at: '.$signatureComponents->getSignedUrl());
+
+            $this->redirectToRoute('app_homepage');
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
+        return $this->redirectToRoute('app_homepage');
+    }
+
+    /**
+     * @Route("/verify", name="app_verify_email")
+     */
+    public function verifyUserEmail(): Response
+    {
+
     }
 }
