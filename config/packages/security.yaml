@@ -22,6 +22,7 @@ security:
             lazy: true #do not authenticate user until it's needed
             provider: app_user_provider
             entry_point: form_login
+            login_throttling: true
             custom_authenticator:
             #   - App\Security\LoginFormAuthenticator
                 - App\Security\DummyAuthenticator
