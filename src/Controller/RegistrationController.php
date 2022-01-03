@@ -69,6 +69,7 @@ class RegistrationController extends AbstractController
     ): Response
     {
         $user = $userRepository->find(['id' => $request->query->get('id')]);
+
         if (!$user) {
             throw $this->createNotFoundException();
         }
