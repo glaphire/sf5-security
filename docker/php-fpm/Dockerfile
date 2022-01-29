@@ -19,6 +19,10 @@ RUN apt-get update && \
 #RUN pecl install xdebug-2.9.3 \
 #    && docker-php-ext-enable xdebug
 
+RUN apt-get install -y libpng-dev
+
+RUN docker-php-ext-install gd
+
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
 
 COPY --from=composer:2.0.10 /usr/bin/composer /usr/local/bin/composer
