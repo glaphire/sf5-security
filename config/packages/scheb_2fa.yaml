@@ -9,3 +9,4 @@ scheb_two_factor:
     totp:
         enabled: true
         issuer: 'Caudron Overlow'
+        template: security/2fa_form.html.twig
